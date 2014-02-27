@@ -1,54 +1,37 @@
 package nl.dykam.dev.moreprism;
 
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.parameters.PrismParameterHandler;
+import me.botsko.prism.parameters.SimplePrismParameterHandler;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class GroupParameter implements PrismParameterHandler {
-    @Override
-    public String getName() {
-        return "Group";
+public class GroupParameter extends SimplePrismParameterHandler {
+    private Permission provider;
+
+    public GroupParameter(Permission provider, String... aliases) {
+        super("Group", Pattern.compile("[\\w]+"), aliases);
+        this.provider = provider;
     }
 
     @Override
-    public String[] getHelp() {
-        return new String[0];
-    }
-
-    @Override
-    public Pattern getArgumentPattern() {
-        return Pattern.compile("(gr|group):([\\w]+)");
-    }
-
-    @Override
-    public void process(QueryParameters query, Matcher input, CommandSender sender) {
-        String group = input.group(2);
-        RegisteredServiceProvider<Permission> registration = Bukkit.getServicesManager().getRegistration(Permission.class);
-        Permission provider = registration.getProvider();
+    protected void process(QueryParameters queryParameters, String alias, String input, CommandSender commandSender) {
+        String group = input;
         World world;
-        if(sender instanceof Player) {
-            world = ((Player) sender).getWorld();
+        if (commandSender instanceof Player) {
+            world = ((Player) commandSender).getWorld();
         } else {
             world = Bukkit.getWorlds().get(0);
         }
         for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-            if(provider.playerInGroup(world, offlinePlayer.getName(),   group))
-                query.addPlayerName(offlinePlayer.getName());
+            if (provider.playerInGroup(world, offlinePlayer.getName(), group))
+                queryParameters.addPlayerName(offlinePlayer.getName());
         }
-    }
-
-    @Override
-    public void defaultTo(QueryParameters query, CommandSender sender) {
-
     }
 }
