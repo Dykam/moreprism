@@ -1,8 +1,11 @@
 # region depends on Worldguard
 # group depends on vault
-region:
-  enabled: true
-  aliases: [rg, region]
-group:
-  enabled: true
-  aliases: [gr, group]
+parameters:
+  region:
+    enabled: true
+    aliases: [rg, region]
+  group:
+    enabled: true
+    aliases: [gr, group]
+actions:
+  - player-balanceupdate

@@ -2,4 +2,5 @@ name: ${project.name}
 version: ${project.version}
 description: ${project.description}
 main: ${plugin.mainClass}
-softdepend: [WorldGuard, Vault]
+softdepend: [WorldGuard, Vault, Essentials]
+depend: [Prism]

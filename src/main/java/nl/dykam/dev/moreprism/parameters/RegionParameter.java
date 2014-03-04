@@ -1,4 +1,4 @@
-package nl.dykam.dev.moreprism;
+package nl.dykam.dev.moreprism.parameters;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -23,6 +23,7 @@ public class RegionParameter extends SimplePrismParameterHandler {
     @Override
     protected void process(QueryParameters queryParameters, String alias, String input, CommandSender commandSender) {
         Matcher matcher = Pattern.compile("(?:([\\w]+):)?([\\w]+)").matcher(input);
+        matcher.find();
         String worldName = matcher.group(1);
         String regionName = matcher.group(2);
         if (worldName != null) {
@@ -31,20 +32,22 @@ public class RegionParameter extends SimplePrismParameterHandler {
                 throw new IllegalArgumentException("World " + worldName + " not found.");
             }
             ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
-            if (region == null) {
-                throw new IllegalArgumentException("Region " + regionName + " not found.");
-            }
-            BlockVector minimumPoint = region.getMinimumPoint();
-            queryParameters.setMinLocation(new Vector(minimumPoint.getX(), minimumPoint.getY(), minimumPoint.getZ()));
-            BlockVector maximumPoint = region.getMaximumPoint();
-            queryParameters.setMaxLocation(new Vector(maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ()));
+            setRegionParameters(queryParameters, regionName, region);
         } else {
             ProtectedRegion region;
             region = getRegion(commandSender, regionName);
-            if (region == null) {
-                throw new IllegalArgumentException("Region " + regionName + " not found.");
-            }
+            setRegionParameters(queryParameters, regionName, region);
         }
+    }
+
+    private void setRegionParameters(QueryParameters queryParameters, String regionName, ProtectedRegion region) {
+        if (region == null) {
+            throw new IllegalArgumentException("Region " + regionName + " not found.");
+        }
+        BlockVector minimumPoint = region.getMinimumPoint();
+        queryParameters.setMinLocation(new Vector(minimumPoint.getX(), minimumPoint.getY(), minimumPoint.getZ()));
+        BlockVector maximumPoint = region.getMaximumPoint();
+        queryParameters.setMaxLocation(new Vector(maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ()));
     }
 
     private ProtectedRegion getRegion(CommandSender commandSender, String regionName) {

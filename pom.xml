@@ -4,6 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>MorePrism</name>
+
     <groupId>nl.dykam.dev</groupId>
     <artifactId>moreprism</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -38,6 +40,11 @@
             <artifactId>worldguard</artifactId>
             <version>5.7.3</version>
         </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>Essentials</artifactId>
+            <version>Pre2.13.1.6</version>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -56,5 +63,28 @@
             <name>Bukkit repo</name>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
+        <repository>
+            <id>ess-repo</id>
+            <url>http://repo.ess3.net/content/groups/essentials</url>
+        </repository>
     </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
