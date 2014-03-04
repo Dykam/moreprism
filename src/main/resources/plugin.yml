@@ -4,3 +4,7 @@ description: ${project.description}
 main: ${plugin.mainClass}
 softdepend: [WorldGuard, Vault, Essentials]
 depend: [Prism]
+commands:
+  moreprism:
+    permission: moreprism.reload
+    usage: /<command> reload

@@ -3,16 +3,14 @@ package nl.dykam.dev.moreprism.actions;
 import com.earth2me.essentials.User;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import net.ess3.api.MaxMoneyException;
-import net.ess3.api.events.UserBalanceUpdateEvent;
 import nl.dykam.dev.moreprism.MorePrismPlugin;
+import nl.dykam.dev.moreprism.Util;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
 import java.math.BigDecimal;
 
@@ -21,6 +19,11 @@ import java.math.BigDecimal;
  */
 public class BalanceUpdateAction extends GenericAction {
     protected BalanceData actionData;
+
+    public BalanceUpdateAction() {
+        type = Type.get();
+        actionData = new BalanceData();
+    }
 
     public void setBalance(BigDecimal newBalance, BigDecimal oldBalance) {
         actionData = new BalanceData();
@@ -35,6 +38,11 @@ public class BalanceUpdateAction extends GenericAction {
         }
     }
 
+    @Override
+    public void save() {
+        data = gson.toJson(actionData);
+    }
+
     public BalanceData getActionData(){
         return this.actionData;
     }
@@ -47,7 +55,9 @@ public class BalanceUpdateAction extends GenericAction {
     }
     public BigDecimal getChange() { return getNewBalance().subtract(getOldBalance()); }
     public String getNiceName() {
-        return getOldBalance().toPlainString() + " -> " + getNewBalance().toPlainString();
+        String oldDisplay = Util.displayCurrency(getOldBalance());
+        String newDisplay = Util.displayCurrency(getNewBalance());
+        return oldDisplay + " -> " + newDisplay;
     }
 
     @Override
@@ -95,17 +105,14 @@ public class BalanceUpdateAction extends GenericAction {
     }
 
     public static class Type extends ActionType {
-        public Type() {
+        static final Type instance = new Type();
+
+        private Type() {
             super("more-player-balanceupdate", false, true, true, "BalanceUpdateAction", "changed");
         }
-    }
 
-    public static class Listener implements org.bukkit.event.Listener {
-        @EventHandler
-        private void onUserBalanceUpdate(UserBalanceUpdateEvent event) {
-            BalanceUpdateAction action = new BalanceUpdateAction();
-            action.setBalance(event.getNewBalance(), MorePrismPlugin.getEssentials().getUser(event.getPlayer()).getMoney());
-            RecordingQueue.addToQueue(action);
+        public static Type get() {
+            return instance;
         }
     }
 

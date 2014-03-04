@@ -45,19 +45,23 @@ public class RegionParameter extends SimplePrismParameterHandler {
             throw new IllegalArgumentException("Region " + regionName + " not found.");
         }
         BlockVector minimumPoint = region.getMinimumPoint();
-        queryParameters.setMinLocation(new Vector(minimumPoint.getX(), minimumPoint.getY(), minimumPoint.getZ()));
+        Vector minimumVector = new Vector(minimumPoint.getX(), minimumPoint.getY(), minimumPoint.getZ());
+        queryParameters.setMinLocation(minimumVector);
         BlockVector maximumPoint = region.getMaximumPoint();
-        queryParameters.setMaxLocation(new Vector(maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ()));
+        Vector maximumVector = new Vector(maximumPoint.getX(), maximumPoint.getY(), maximumPoint.getZ());
+        queryParameters.setMaxLocation(maximumVector);
+        Bukkit.broadcastMessage(minimumVector.toString());
+        Bukkit.broadcastMessage(maximumVector.toString());
     }
 
     private ProtectedRegion getRegion(CommandSender commandSender, String regionName) {
-        if (commandSender instanceof Player) {
-            World world = ((Player) commandSender).getWorld();
-            ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
-            if (region != null) {
-                return region;
-            }
-        }
+//        if (commandSender instanceof Player) {
+//            World world = ((Player) commandSender).getWorld();
+//            ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
+//            if (region != null) {
+//                return region;
+//            }
+//        }
         for (World world : Bukkit.getWorlds()) {
             ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
             if (region != null) {
